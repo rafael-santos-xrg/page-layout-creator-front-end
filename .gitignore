@@ -1,0 +1,49 @@
+# Node.js
+node_modules/
+package-lock.json
+yarn.lock
+
+# Diretório de build/compilação
+dist/
+build/
+
+# TypeScript
+*.tsbuildinfo
+*.d.ts
+*.d.ts.map
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# IDEs e editores
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-workspace
+
+# Sistema operacional
+.DS_Store
+Thumbs.db
+
+# Cache do TypeScript
+*.tscache
+
+# Cache de testes
+coverage/
+
+# Arquivos temporários
+*.tmp
+*.temp
+
+# Configurações de browsers
+/.sass-cache/
+/.parcel-cache/
+
+# Minificados e arquivos de pacotes
+*.min.*
+*.zip
+*.tar.gz
+*.tgz

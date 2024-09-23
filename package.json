@@ -1,0 +1,24 @@
+{
+  "name": "front-end",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "parcel": "^2.12.0",
+    "typescript": "^5.6.2"
+  },
+  "dependencies": {
+    "@syncfusion/ej2-base": "^27.1.48",
+    "@syncfusion/ej2-buttons": "^27.1.48",
+    "@syncfusion/ej2-grids": "^27.1.48",
+    "vite": "^5.4.7"
+  }
+}
