@@ -5,79 +5,78 @@ import { ButtonFactory } from "./components/button";
 import { ModalFactory } from "./components/modal";
 import { Dialog } from "@syncfusion/ej2-popups";
 import FormBuilder from "./components/form";
+import { ApiService } from "./services/api";
 
-ScriptSanitizer.removeSyncFuisonSpanScript();
+ScriptSanitizer.removeSyncFusionSpanScript();
 
 let modal: Dialog | null = null;
 
-const options = {
-  headers: [
-    { field: "ID", headerText: "Id", textAlign: "Center" },
-    { field: "createdBy", headerText: "Criado Por", textAlign: "Center" },
-    {
-      field: "createdAt",
-      headerText: "Data de Criação",
-      textAlign: "Center",
-      valueAccessor: (field: string, data: any) => StringFormatter.formatDatetoLocale(field, data),
-    },
-    {
-      field: "lastModifiedAt",
-      headerText: "Última Atualização",
-      textAlign: "Center",
-      valueAccessor: (field: string, data: any) => StringFormatter.formatDatetoLocale(field, data),
-    },
-    {
-      field: "action",
-      headerText: "Opções",
-      textAlign: "Center",
-      template: (data: { ID: string }) =>
-        ButtonFactory.createButtonAsString({
-          text: "Visualizar",
-          className: ["e-info"],
-          attributes: [{ key: "data-id", value: data.ID }],
-        }),
-    },
-  ],
-  data: [
-    { ID: 1, createdBy: "Rafael", createdAt: "2024-09-22", lastModifiedAt: "2024-09-23" },
-    { ID: 2, createdBy: "João", createdAt: "2024-09-21", lastModifiedAt: "2024-09-22" },
-    { ID: 3, createdBy: "Maria", createdAt: "2024-09-20", lastModifiedAt: "2024-09-21" },
-    { ID: 4, createdBy: "Ana", createdAt: "2024-09-19", lastModifiedAt: "2024-09-20" },
-    { ID: 5, createdBy: "Pedro", createdAt: "2024-09-18", lastModifiedAt: "2024-09-19" },
-  ],
-};
+const headers = [
+  { field: "id", headerText: "Id", textAlign: "Center" },
+  { field: "createdBy", headerText: "Criado Por", textAlign: "Center" },
+  {
+    field: "createdAt",
+    headerText: "Data de Criação",
+    textAlign: "Center",
+    valueAccessor: (field: string, data: any) => StringFormatter.formatDatetoLocale(field, data),
+  },
+  {
+    field: "lastModifiedAt",
+    headerText: "Última Atualização",
+    textAlign: "Center",
+    valueAccessor: (field: string, data: any) => StringFormatter.formatDatetoLocale(field, data),
+  },
+  {
+    field: "action",
+    headerText: "Opções",
+    textAlign: "Center",
+    template: (data: { id: string }) =>
+      ButtonFactory.createButtonAsString({
+        text: "Visualizar",
+        className: ["e-info"],
+        attributes: [{ key: "data-id", value: data.id }],
+      }),
+  },
+];
 
-const table = TableFactory.createTable(options, "#gridContainer");
-table.appendTo("#app");
+async function init() {
+  try {
+    const gridData = await ApiService.fetchGridData();
 
-ButtonFactory.addEventListenerToButton("#app", "click", (event) => {
-  const target = event.target as HTMLElement;
+    console.log(gridData);
 
-  if (target.closest("button.e-info")) {
-    const id = target.getAttribute("data-id");
-    if (id) {
-      showModal(id);
-    }
+    const options = {
+      headers: headers,
+      data: gridData.data || [],
+    };
+
+    const table = TableFactory.createTable(options, "#gridContainer");
+    table.appendTo("#app");
+
+    ButtonFactory.addEventListenerToButton("#app", "click", async (event) => {
+      const target = event.target as HTMLElement;
+
+      if (target.closest("button.e-info")) {
+        const id = target.getAttribute("data-id");
+        console.log(id);
+        if (id) {
+          const schema = await ApiService.fetchFormSchema(Number(id));
+          console.log(schema);
+          showModal(schema.data);
+        }
+      }
+    });
+  } catch (error) {
+    console.error("Erro ao inicializar:", error);
   }
-});
+}
 
-function showModal(id?: string) {
+function showModal(schema?: any) {
   const modalDiv = document.getElementById("modal") || createModalDiv();
 
   if (!modal) {
     modal = ModalFactory.createModal({
-      header: "Exemplo de Modal",
-      content: "",
-      buttons: [
-        {
-          click: submitForm,
-          buttonModel: { content: "Enviar", isPrimary: true },
-        },
-        {
-          click: closeModal,
-          buttonModel: { content: "Cancelar" },
-        },
-      ],
+      header: "Formulário",
       isModal: true,
       showCloseIcon: true,
       target: "#modal",
@@ -86,10 +85,12 @@ function showModal(id?: string) {
 
   const modalContent = modalDiv.querySelector(".e-dlg-content");
   if (modalContent) {
-    modalContent.innerHTML = "";
+    while (modalContent.firstChild) {
+      modalContent.removeChild(modalContent.firstChild);
+    }
   }
 
-  const formBuilder = createFormBuilder(id);
+  const formBuilder = createFormBuilder(schema);
   formBuilder.appendTo("#modal .e-dlg-content");
 
   modal.show();
@@ -102,27 +103,11 @@ function createModalDiv(): HTMLElement {
   return modalDiv;
 }
 
-function createFormBuilder(id?: string): FormBuilder {
+function createFormBuilder(schema: any): FormBuilder {
   return new FormBuilder({
-    inputs: [
-      { type: "text", label: "Nome", name: "name" },
-      { type: "email", label: "Email", name: "email" },
-      { type: "text", label: "ID", name: "id", value: id || "" },
-      { type: "select", label: "Opções", name: "options", options: ["Opção 1", "Opção 2"] },
-      {
-        type: "radio",
-        label: "Gênero",
-        name: "gender",
-        radioOptions: [
-          { label: "Masculino", value: "male" },
-          { label: "Feminino", value: "female" },
-        ],
-      },
-      { type: "number", label: "Idade", name: "age", value: "" },
-      { type: "date", label: "Data de Nascimento", name: "dob", value: "" },
-    ],
-    onSubmit: (data) => {
-      alert(`Formulário enviado com sucesso! Dados: ${JSON.stringify(data)}`);
+    inputs: schema.inputs,
+    onSubmit: () => {
+      submitForm();
     },
   });
 }
@@ -131,14 +116,10 @@ function submitForm() {
   const form = document.getElementById("dynamicForm") as HTMLFormElement;
   if (form.checkValidity()) {
     form.requestSubmit();
+    modal?.hide();
   } else {
-    alert("Por favor, preencha todos os campos obrigatórios.");
+    console.log("Form inválido");
   }
 }
 
-function closeModal() {
-  modal?.hide();
-  modal?.destroy();
-  document.getElementById("modal")?.remove();
-  modal = null;
-}
+init();
