@@ -1,4 +1,4 @@
-interface ButtonOptions {
+export interface ButtonOptions {
   text: string;
   className?: Array<"e-primary" | "e-success" | "e-danger" | "e-warning" | "e-info" | "e-link" | string>;
   attributes?: Array<{ key: string; value: string }>;
