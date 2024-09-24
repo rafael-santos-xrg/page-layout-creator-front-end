@@ -1,7 +1,7 @@
 interface ButtonOptions {
   text: string;
   className?: Array<"e-primary" | "e-success" | "e-danger" | "e-warning" | "e-info" | "e-link" | string>;
-  atributes?: Array<{ key: string; value: string }>;
+  attributes?: Array<{ key: string; value: string }>;
   onClick?: (id?: string) => void;
   type?: "button" | "submit" | "reset";
   style?: Record<string, string>;
@@ -25,8 +25,8 @@ export class ButtonFactory {
       });
     }
 
-    if (options.atributes) {
-      options.atributes.forEach(({ key, value }) => {
+    if (options.attributes) {
+      options.attributes.forEach(({ key, value }) => {
         button.setAttribute(key, value);
       });
     }
