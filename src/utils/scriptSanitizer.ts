@@ -1,16 +1,24 @@
 export class ScriptSanitizer {
-  public static removeSyncFuisonSpanScript(): void {
+  public static removeSyncFusionSpanScript(): void {
     document.addEventListener("DOMContentLoaded", () => {
-      const scripts = document.querySelectorAll("script");
+      const observer = new MutationObserver(() => {
+        const scripts = document.querySelectorAll("script");
 
-      if (scripts.length > 0) {
-        const lastScript = scripts[scripts.length - 1];
-        const divToRemove = lastScript.nextElementSibling;
+        if (scripts.length > 0) {
+          const lastScript = scripts[scripts.length - 1];
+          const divToRemove = lastScript.nextElementSibling;
 
-        if (divToRemove && divToRemove.tagName === "DIV") {
-          divToRemove.remove();
+          console.log(divToRemove);
+
+          if (divToRemove && divToRemove.tagName === "DIV") {
+            divToRemove.remove();
+          }
         }
-      }
+      });
+
+      observer.observe(document.body, { childList: true, subtree: true });
+
+      setTimeout(() => observer.disconnect(), 100);
     });
   }
 }
