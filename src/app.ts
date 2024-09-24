@@ -50,20 +50,6 @@ const options = {
 const table = TableFactory.createTable(options, "#gridContainer");
 table.appendTo("#app");
 
-// Criação de um formulário inicial
-new FormBuilder({
-  inputs: [
-    { type: "text", label: "Nome", name: "name" },
-    { type: "email", label: "Email", name: "email" },
-    { type: "text", label: "ID", name: "id" },
-    { type: "select", label: "Opções", name: "options", options: ["Opção 1", "Opção 2"] },
-  ],
-  onSubmit: (data) => {
-    alert(`Formulário enviado com sucesso! Dados: ${JSON.stringify(data)}`);
-  },
-});
-
-// Adiciona um EventListener para o botão de "Visualizar"
 ButtonFactory.addEventListenerToButton("#app", "click", (event) => {
   const target = event.target as HTMLElement;
 
@@ -92,8 +78,6 @@ function showModal(id?: string) {
           buttonModel: { content: "Cancelar" },
         },
       ],
-      width: "400px",
-      height: "auto",
       isModal: true,
       showCloseIcon: true,
       target: "#modal",
@@ -125,6 +109,17 @@ function createFormBuilder(id?: string): FormBuilder {
       { type: "email", label: "Email", name: "email" },
       { type: "text", label: "ID", name: "id", value: id || "" },
       { type: "select", label: "Opções", name: "options", options: ["Opção 1", "Opção 2"] },
+      {
+        type: "radio",
+        label: "Gênero",
+        name: "gender",
+        radioOptions: [
+          { label: "Masculino", value: "male" },
+          { label: "Feminino", value: "female" },
+        ],
+      },
+      { type: "number", label: "Idade", name: "age", value: "" },
+      { type: "date", label: "Data de Nascimento", name: "dob", value: "" },
     ],
     onSubmit: (data) => {
       alert(`Formulário enviado com sucesso! Dados: ${JSON.stringify(data)}`);
