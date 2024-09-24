@@ -17,8 +17,6 @@ export class ModalFactory {
       header: options.header || "Default Header",
       content: options.content || "Default Content",
       buttons: options.buttons || [],
-      width: options.width || "300px",
-      height: options.height || "200px",
       isModal: options.isModal !== undefined ? options.isModal : true,
       showCloseIcon: options.showCloseIcon !== undefined ? options.showCloseIcon : true,
     });
