@@ -1,17 +1,9 @@
 import { FormValidator } from "@syncfusion/ej2-inputs";
-import { InputFactory } from "./input";
+import { InputConfig, InputFactory } from "./input";
 import { ButtonFactory } from "./button";
 
-interface FormInput {
-  type: string;
-  label: string;
-  name: string;
-  value?: string;
-  options?: string[];
-}
-
 interface FormConfig {
-  inputs: FormInput[];
+  inputs: InputConfig[];
   onSubmit: (data: any) => void;
 }
 
