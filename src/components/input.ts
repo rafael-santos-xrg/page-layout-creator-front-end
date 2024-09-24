@@ -1,24 +1,22 @@
 import { TextBox } from "@syncfusion/ej2-inputs";
 import { DropDownList } from "@syncfusion/ej2-dropdowns";
+import { RadioButton } from "@syncfusion/ej2-buttons";
+import { NumericTextBox } from "@syncfusion/ej2-inputs";
+import { DatePicker } from "@syncfusion/ej2-calendars";
 
-interface InputConfig {
+export interface InputConfig {
   type: string;
   label: string;
   name: string;
   value?: string;
   options?: string[];
+  radioOptions?: { label: string; value: string }[];
 }
 
 export class InputFactory {
   public static createInput(inputConfig: InputConfig): HTMLElement {
     const inputWrapper = document.createElement("div");
-    inputWrapper.classList.add("form-group");
-
-    const label = document.createElement("label");
-    label.setAttribute("for", inputConfig.name);
-    label.textContent = inputConfig.label;
-
-    inputWrapper.appendChild(label);
+    inputWrapper.classList.add("form-group", `${inputConfig.type}`);
 
     let inputElement: HTMLElement;
 
@@ -32,7 +30,7 @@ export class InputFactory {
         inputElement.setAttribute("value", inputConfig.value || "");
         inputWrapper.appendChild(inputElement);
 
-        new TextBox({ value: inputConfig.value || "" }, inputElement as HTMLInputElement);
+        new TextBox({ value: inputConfig.value || "", placeholder: inputConfig.label, floatLabelType: "Auto" }, inputElement as HTMLInputElement);
         break;
 
       case "select":
@@ -41,14 +39,73 @@ export class InputFactory {
         inputElement.setAttribute("name", inputConfig.name);
         inputWrapper.appendChild(inputElement);
 
-        console.log(inputConfig);
-
         new DropDownList(
           {
             dataSource: inputConfig.options || [],
             value: inputConfig.value,
+            placeholder: inputConfig.label,
+            floatLabelType: "Auto",
           },
           inputElement
+        );
+        break;
+
+      case "radio":
+        const mainLabel = document.createElement("label");
+        mainLabel.setAttribute("for", inputConfig.name);
+        mainLabel.textContent = inputConfig.label + " :";
+        inputWrapper.appendChild(mainLabel);
+
+        inputConfig.radioOptions?.forEach((option, index) => {
+          const radioInput = document.createElement("input");
+          radioInput.setAttribute("type", "radio");
+          radioInput.setAttribute("id", `${inputConfig.name}_${index}`);
+          radioInput.setAttribute("name", inputConfig.name);
+          radioInput.setAttribute("value", option.value);
+          inputWrapper.appendChild(radioInput);
+
+          const radioLabel = document.createElement("label");
+          radioLabel.setAttribute("for", `${inputConfig.name}_${index}`);
+          radioLabel.textContent = option.label;
+          inputWrapper.appendChild(radioLabel);
+
+          new RadioButton({
+            label: option.label,
+            value: option.value,
+            checked: inputConfig.value === option.value,
+          });
+        });
+        break;
+
+      case "number":
+        inputElement = document.createElement("input");
+        inputElement.setAttribute("id", inputConfig.name);
+        inputElement.setAttribute("name", inputConfig.name);
+        inputWrapper.appendChild(inputElement);
+
+        new NumericTextBox(
+          {
+            value: inputConfig.value ? parseFloat(inputConfig.value) : undefined,
+            placeholder: inputConfig.label,
+            floatLabelType: "Auto",
+          },
+          inputElement as HTMLInputElement
+        );
+        break;
+
+      case "date":
+        inputElement = document.createElement("input");
+        inputElement.setAttribute("id", inputConfig.name);
+        inputElement.setAttribute("name", inputConfig.name);
+        inputWrapper.appendChild(inputElement);
+
+        new DatePicker(
+          {
+            value: inputConfig.value ? new Date(inputConfig.value) : undefined,
+            placeholder: inputConfig.label,
+            floatLabelType: "Auto",
+          },
+          inputElement as HTMLInputElement
         );
         break;
 
